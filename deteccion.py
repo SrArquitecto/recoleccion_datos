@@ -85,6 +85,8 @@ class YoloModel(YoloModelInterface):
     def obtener_resultados(self):
         return self.resultados
 
+
+
     ######LLEVAR A OTRA CLASE
     def iniciar_tracker(self, nodo):
         _, x, y, h, w, _ = nodo
@@ -95,6 +97,8 @@ class YoloModel(YoloModelInterface):
     def actualizar_tracker(self, imagen):
         self.visto, self.bbox = self.tracker.update(imagen)
         return self.visto, self.bbox
+
+
 
 
     def obtener_detecciones(self, dibujar=False):
