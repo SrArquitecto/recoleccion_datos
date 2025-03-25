@@ -113,9 +113,10 @@ class YoloModel(YoloModelInterface):
         for resultado in self.resultados: 
             for box in resultado.boxes:
                 conf = box.conf[0].item()
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                x1, y1, x2, y2 = map(float, box.xyxy[0])
                 cls = int(box.cls[0].item())
                 self.detecciones.append((cls, x1, y1, x2, y2, conf))
+                #print(f"Clase: {cls}, Coordenadas: ({x1}, {y1}, {x2}, {y2}), Confianza: {conf}")
                 if dibujar:
                     self._dibujar_caja(cls, x1, y1, x2, y2, conf)
         if dibujar:
@@ -140,7 +141,7 @@ class YoloModel(YoloModelInterface):
         for resultado in self.resultados: 
             for box in resultado.boxes:
                 conf = box.conf[0].item()
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                x1, y1, x2, y2 = map(float, box.xyxy[0])
                 cls = int(box.cls[0].item())
                 self.detecciones.append((cls, x1, y1, x2, y2, conf))
                 x1, y1, x2, y2 = box
@@ -197,10 +198,44 @@ class YoloModel(YoloModelInterface):
         if self.detecciones:
             with open(salida, 'w') as f:
                 for deteccion in self.detecciones:
-                    f.write(f"{deteccion}\n")
+                    cls, x1, y1, x2, y2, _ = deteccion
+                    x1, y1, x2, y2 = self._normalizar_coordenadas(x1, y1, x2, y2)
+                    d = f"{cls} {x1} {y1} {x2} {y2}"
+                    f.write(f"{d}\n")
         else:
             with open(salida, 'w') as f:
                 f.write(" ")
+    
+    def _normalizar_coordenadas(self, x1, y1, x2, y2, image_width=1920, image_height=1080):
+        """
+        Normaliza las coordenadas de una caja delimitadora a un rango [0, 1] 
+        basado en las dimensiones de la imagen de entrada (1920x1080 por defecto).
+        
+        :param x1: Coordenada x1 (esquina superior izquierda).
+        :param y1: Coordenada y1 (esquina superior izquierda).
+        :param x2: Coordenada x2 (esquina inferior derecha).
+        :param y2: Coordenada y2 (esquina inferior derecha).
+        :param image_width: Ancho de la imagen (por defecto 1920).
+        :param image_height: Alto de la imagen (por defecto 1080).
+        
+        :return: Las coordenadas normalizadas (x1, y1, x2, y2).
+        """
+        x1_normalized = x1 / image_width
+        y1_normalized = y1 / image_height
+        x2_normalized = x2 / image_width
+        y2_normalized = y2 / image_height
+
+        return x1_normalized, y1_normalized, x2_normalized, y2_normalized
+
+    def _desnormalizar_coordenadas(self, x1, y1, x2, y2, image_width=1920, image_height=1080):
+        """
+        Desnormaliza las coordenadas de una caja delimitadora a un rango [0, 1]"""
+        x1_desnormalizado = x1 * image_width
+        y1_desnormalizado = y1 * image_height
+        x2_desnormalizado = x2 * image_width
+        y2_desnormalizado = y2 * image_height
+
+        return x1_desnormalizado, y1_desnormalizado, x2_desnormalizado, y2_desnormalizado
 
     def dibujar_caja_tracker(self, bbox, color=(0, 0, 255), grosor=2):
         """
