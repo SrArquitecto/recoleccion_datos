@@ -87,6 +87,7 @@ class YoloModel(YoloModelInterface):
 
 
 
+
     ######LLEVAR A OTRA CLASE
     def iniciar_tracker(self, nodo):
         _, x, y, h, w, _ = nodo
