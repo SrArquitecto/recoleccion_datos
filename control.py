@@ -1,11 +1,11 @@
-from pynput import keyboard
 import time
 import threading
 import os
 import mss
-from datetime import datetime
 import numpy as np
 import cv2
+from pynput import keyboard
+from datetime import datetime
 from deteccion import YoloModelInterface, YoloModel
 from segmentacion import MaskGeneratorInterface, BinaryMaskGenerator
 from keylogger import KeyLogger, KeyLoggerInterface
