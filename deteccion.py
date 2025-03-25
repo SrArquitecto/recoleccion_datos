@@ -200,6 +200,7 @@ class YoloModel(YoloModelInterface):
                 for deteccion in self.detecciones:
                     cls, x1, y1, x2, y2, _ = deteccion
                     x1, y1, x2, y2 = self._normalizar_coordenadas(x1, y1, x2, y2)
+                    x1, y1, x2, y2 = self._desnormalizar_coordenadas(x1, y1, x2, y2)
                     d = f"{cls} {x1} {y1} {x2} {y2}"
                     f.write(f"{d}\n")
         else:
@@ -227,7 +228,7 @@ class YoloModel(YoloModelInterface):
 
         return x1_normalized, y1_normalized, x2_normalized, y2_normalized
 
-    def _desnormalizar_coordenadas(self, x1, y1, x2, y2, image_width=1920, image_height=1080):
+    def _desnormalizar_coordenadas(self, x1, y1, x2, y2, image_width=1024, image_height=576):
         """
         Desnormaliza las coordenadas de una caja delimitadora a un rango [0, 1]"""
         x1_desnormalizado = x1 * image_width

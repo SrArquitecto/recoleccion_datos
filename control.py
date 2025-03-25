@@ -31,10 +31,22 @@ class Control():
         # Implement any functionality needed on key release
         pass
 
-    def guardar_imagen(self, imagen, tstamp):
+    def guardar_imagen(self, imagen, tstamp, nuevo_ancho=1024, nuevo_alto=576):
+        """
+        Guarda la imagen después de redimensionarla.
+        :param imagen: Imagen a guardar (numpy array).
+        :param tstamp: Timestamp para el nombre del archivo.
+        :param nuevo_ancho: El nuevo ancho de la imagen después de redimensionarla.
+        :param nuevo_alto: El nuevo alto de la imagen después de redimensionarla.
+        """
         if not os.path.exists("./train/capturas"):
             os.makedirs("./train/capturas")
-        cv2.imwrite(f"./train/capturas/{tstamp}.jpg", imagen)
+        
+        # Redimensionar la imagen a las dimensiones deseadas
+        imagen_redimensionada = cv2.resize(imagen, (nuevo_ancho, nuevo_alto))
+        
+        # Guardar la imagen redimensionada
+        cv2.imwrite(f"./train/capturas/{tstamp}.jpg", imagen_redimensionada)
 
     def iniciar(self, detector: YoloModelInterface, segmentador: MaskGeneratorInterface, keylogger: KeyLoggerInterface):
         start_time = time.time()

@@ -15,7 +15,7 @@ class MaskGeneratorInterface(ABC):
         pass
 
     @abstractmethod
-    def guardar_mascara(self, tstamp):
+    def guardar_mascara(self, tstamp, target_size = (1024, 576)):
         pass
 
     @abstractmethod
@@ -96,7 +96,7 @@ class BinaryMaskGenerator(MaskGeneratorInterface):
     def obtener_mascara(self):
         return self.mascara_invertida
 
-    def guardar_mascara(self, tstamp):
+    def guardar_mascara(self, tstamp, target_size = (1024, 576)):
         """
         Guarda la imagen binaria en un archivo.
         :param mascara: Imagen binaria generada.
@@ -109,7 +109,10 @@ class BinaryMaskGenerator(MaskGeneratorInterface):
         salida = os.path.join(self.output_dir, nombre_fichero)
 
         if self.mascara_invertida is not None:
-            cv2.imwrite(salida, self.mascara_invertida * 255)
+            # Redimensionar la máscara a 1024x576 manteniendo el ratio
+            
+            resized_mask = cv2.resize(self.mascara_invertida, target_size, interpolation=cv2.INTER_NEAREST)
+            cv2.imwrite(salida, resized_mask * 255)
         else:
             raise ValueError("La máscara invertida no ha sido generada. Asegúrese de que se ha ejecutado 'generar_mascara' correctamente.")
         
